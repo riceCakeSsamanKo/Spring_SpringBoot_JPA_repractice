@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello</title>
+    <!-- http-equiv="Content-Type"으로 지정한 경우 content를 지정함.
+        content로는 text/html과 charset= utf-8이 올 수 있음.-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+    <!--HelloController.java의 model.addAttribute에서 data라는 이름으로 반환된 값이
+        ${data}에 들어간다. 만일 반환되는 값이 없는 경우 화면(localhost:8080)에
+        "안녕하세요. 손님"이 출력되고, 반환되는 값이 있는 경우에는 "안녕하세요 data"가 출력된다.-->
+    <p th:text ="'안녕하세요 ' + ${data}">안녕하세요. 손님</p>
+</body>
+</html>

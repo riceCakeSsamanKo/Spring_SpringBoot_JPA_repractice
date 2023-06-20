@@ -1,0 +1,42 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.8'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+group = 'jpabook'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+    // devtools 라이브러리 추가 시 html 파일을 수정시 스프링을 재실행 할 필요 없이
+	// 해당 파일만 shift+command+F9으로 재컴파일 시 페이지가 해당 내용에 맞게 수정됨
+	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'junit:junit:4.13.1'
+
+	//쿼리 파라미터를 로그로 남기는 외부 라이브러리
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+	// 롬복 설정
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// JUnit4 추가
+	testImplementation("org.junit.vintage:junit-vintage-engine") {
+		exclude group: "org.hamcrest", module: "hamcrest-core"
+	}
+}
+test {
+	useJUnitPlatform()
+}
