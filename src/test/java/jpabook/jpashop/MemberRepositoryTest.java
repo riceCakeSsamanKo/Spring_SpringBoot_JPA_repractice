@@ -1,5 +1,7 @@
 package jpabook.jpashop;
 
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
+// 실제 테스트가 아닌 테스트 연습을 위해 만든 테스트 케이스
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MemberRepositoryTest {
