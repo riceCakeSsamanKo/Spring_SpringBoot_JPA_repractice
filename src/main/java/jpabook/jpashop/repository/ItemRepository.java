@@ -22,7 +22,7 @@ public class ItemRepository {
         }
     }
 
-    public Item findOne(Long id) {
+    public Item find(Long id) {
         return em.find(Item.class, id);
     }
 
