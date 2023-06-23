@@ -22,8 +22,8 @@ public class ItemRepository {
         }
     }
 
-    public Item find(Long id) {
-        return em.find(Item.class, id);
+    public Item find(Long itemId) {
+        return em.find(Item.class, itemId);
     }
 
     public List<Item> findAll() {

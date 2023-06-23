@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,8 +14,8 @@ import static javax.persistence.FetchType.*;
 
 @Entity
 @Table(name = "ORDERS")
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //기본 생성자를 protected로 생성해 new 생성 방지
 public class Order {
     @Id
     @GeneratedValue
@@ -99,6 +101,5 @@ public class Order {
             totalPrice += orderItem.getTotalPrice();
         }
         return totalPrice;
-     * @return
     }
 }

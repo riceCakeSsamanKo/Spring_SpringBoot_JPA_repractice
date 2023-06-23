@@ -1,7 +1,9 @@
 package jpabook.jpashop.domain;
 
 import jpabook.jpashop.domain.item.Item;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,8 +12,8 @@ import static javax.persistence.FetchType.*;
 
 @Entity
 @Table(name = "order_item")
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //기본 생성자를 protectd로 선언해 생성
 public class OrderItem {
     @Id
     @GeneratedValue
@@ -28,6 +30,10 @@ public class OrderItem {
 
     private int orderPrice;
     private int count;
+
+    /*// protected로 선언해서 생성 메서드 외에 생성하는 경우를 차단함.
+    protected OrderItem() {
+    }*/
 
     //==생성 메서드==//
     public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
