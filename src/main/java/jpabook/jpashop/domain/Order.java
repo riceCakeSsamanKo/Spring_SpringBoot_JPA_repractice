@@ -99,5 +99,6 @@ public class Order {
             totalPrice += orderItem.getTotalPrice();
         }
         return totalPrice;
+     * @return
     }
 }
