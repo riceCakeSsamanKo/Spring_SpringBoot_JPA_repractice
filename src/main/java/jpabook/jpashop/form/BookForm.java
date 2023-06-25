@@ -10,16 +10,17 @@ public class BookForm extends ItemForm{
     private String author;
     private String isbn;
 
-    public static Book createBook(String name, int price, int stockQuantity, String author, String isbn) {
+    public static BookForm createBookForm(Long id, String name, int price, int stockQuantity, String author, String isbn) {
 
-        Book book = new Book();
+        BookForm form = new BookForm();
 
-        book.setName(name);
-        book.setPrice(price);
-        book.setStockQuantity(stockQuantity);
-        book.setAuthor(author);
-        book.setIsbn(isbn);
+        form.setId(id);
+        form.setName(name);
+        form.setPrice(price);
+        form.setStockQuantity(stockQuantity);
+        form.setAuthor(author);
+        form.setIsbn(isbn);
 
-        return book;
+        return form;
     }
 }
