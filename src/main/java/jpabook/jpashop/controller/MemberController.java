@@ -33,7 +33,7 @@ public class MemberController {
         // 전달된 memberForm에 데이터를 담음
 
         log.info("Create Member");
-        return "members/createMemberForm";
+        return "members/createMemberForm.html";
     }
 
     // Post: 리소스를 생성/업데이트하기 위해 서버에 데이터를 보내는 데 사용됩니다.

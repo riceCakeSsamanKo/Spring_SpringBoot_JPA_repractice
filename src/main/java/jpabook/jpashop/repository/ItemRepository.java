@@ -1,8 +1,12 @@
 package jpabook.jpashop.repository;
 
+import jpabook.jpashop.domain.item.Album;
+import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
+import jpabook.jpashop.domain.item.Movie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,7 +22,7 @@ public class ItemRepository {
         if (item.getId() == null) {  // item이 persist 되기 전에는 id가 없음
             em.persist(item);
         } else{
-            em.merge(item);  //update
+             em.merge(item);  //update
         }
     }
 
@@ -30,4 +34,5 @@ public class ItemRepository {
         return em.createQuery("select i From Item i", Item.class)
                 .getResultList();
     }
+
 }

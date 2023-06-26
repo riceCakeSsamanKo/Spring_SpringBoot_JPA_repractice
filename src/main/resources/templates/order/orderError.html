@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+        <h1>에러페이지!</h1>
+        <h2>주문 수량이 부족합니다</h2>
+        <a href = "http://localhost:8080">
+            <button type="submit" class="btn btn-primary">돌아가기</button>
+        </a>
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

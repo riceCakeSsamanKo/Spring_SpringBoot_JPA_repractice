@@ -18,7 +18,7 @@ import java.util.List;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-public class BookController {
+public class ItemController {
 
     private final ItemService itemService;
 
@@ -28,7 +28,7 @@ public class BookController {
         model.addAttribute("form", new BookForm());
         log.info("create book");
 
-        return "items/createItemForm";
+        return "items/createItemForm.html";
     }
 
     @PostMapping("/items/new")
@@ -45,7 +45,7 @@ public class BookController {
         model.addAttribute("items", items); //조회한 members를 model에 담아("members"에 담아) html에 전달
         log.info("Item List");
 
-        return "items/itemList";
+        return "items/itemList.html";
     }
 
     @GetMapping("/items/{itemId}/edit")  //@PathVariable로 {itemId}와 매핑
@@ -55,21 +55,21 @@ public class BookController {
         BookForm form = BookForm.createBookForm(item.getId(), item.getName(), item.getPrice(), item.getStockQuantity(), item.getAuthor(), item.getIsbn());
         model.addAttribute("form", form);
 
-        return "items/updateItemForm";
+        return "items/updateItemForm.html";
     }
 
     @PostMapping("/items/{itemId}/edit")  //@PathVariable로 {itemId}와 매핑
     public String updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute("form") BookForm form) { // @ModelAttribute: items/updateItemForm.html의 "form"에 대한 데이터를 BookForm form에 대입함
-        Book item = (Book) itemService.findOne(form.getId());
+//        Book item = (Book) itemService.findOne(form.getId());
+//
+//        item.setName(form.getName());
+//        item.setPrice(form.getPrice());
+//        item.setStockQuantity(form.getStockQuantity());
+//        item.setAuthor(form.getAuthor());
+//        item.setIsbn(form.getIsbn());
+//        itemService.saveItem(item);  //이미 id가 존재하는 경우: merge 처리 되어 있음
 
-        item.setName(form.getName());
-        item.setPrice(form.getPrice());
-        item.setStockQuantity(form.getStockQuantity());
-        item.setAuthor(form.getAuthor());
-        item.setIsbn(form.getIsbn());
-
-        itemService.saveItem(item);  //이미 id가 존재하는 경우: merge 처리 되어 있음
-
+        itemService.updateItem(itemId, form);
         return "redirect:/items"; // localhost:8080/items로 재접속
     }
 }
