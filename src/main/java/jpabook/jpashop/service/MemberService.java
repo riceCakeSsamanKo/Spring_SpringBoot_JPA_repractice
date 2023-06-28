@@ -26,6 +26,7 @@ public class MemberService {
         return member.getId();
     }
 
+    @Transactional(readOnly = true)
     private void validateDuplicateMember(Member member) {
         List<Member> findMembers = memberRepository.findByName(member.getName());
         if (!findMembers.isEmpty()) {
@@ -33,17 +34,23 @@ public class MemberService {
         }
     }
 
+    public void update(Long id, String name) {
+        Member member = memberRepository.find(id);
+        member.setName(name);
+    }
     //회원 전체 조회
+
     @Transactional(readOnly = true)
     // 조회 같이 데이터 변경이 되지 않는곳에서 readOnly = true를 하면 성능이 좀더 좋음.
     // 만일 데이터 변경이 되는 곳에서 readOnly = true하면 데이터 변경이 안되서 망함.
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
-
     //회원 단건 조회
+
     @Transactional(readOnly = true)
     public Member findOne(Long memberId) {
         return memberRepository.find(memberId);
     }
+
 }

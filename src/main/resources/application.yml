@@ -8,7 +8,7 @@ spring:
   jpa:
     hibernate:
     # create 모드: 실행마다 테이블이 재생성됨
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
 #        show_sql: true  log가 system.out으로 출려됨

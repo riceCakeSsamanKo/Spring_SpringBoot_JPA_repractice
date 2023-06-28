@@ -1,13 +1,14 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter @Setter
@@ -17,6 +18,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @NotEmpty(message = "이름은 필수 입력 값입니다.")
     private String name;
 
     @Embedded

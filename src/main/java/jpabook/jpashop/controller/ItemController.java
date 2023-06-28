@@ -42,7 +42,7 @@ public class ItemController {
     @GetMapping("/items")
     public String list(Model model) {
         List<Item> items = itemService.findItems();
-        model.addAttribute("items", items); //조회한 members를 model에 담아("members"에 담아) html에 전달
+        model.addAttribute("items", items); //조회한 items를 model에 담아("items"에 담아) html에 전달
         log.info("Item List");
 
         return "items/itemList.html";
@@ -59,7 +59,9 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/edit")  //@PathVariable로 {itemId}와 매핑
-    public String updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute("form") BookForm form) { // @ModelAttribute: items/updateItemForm.html의 "form"에 대한 데이터를 BookForm form에 대입함
+    public String updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute("form")  BookForm form) {
+        // @ModelAttribute: items/updateItemForm.html의 "form"에 대한 데이터를 BookForm form에 대입함(굳이 안써도 ㄱㅊ)
+
 //        Book item = (Book) itemService.findOne(form.getId());
 //
 //        item.setName(form.getName());

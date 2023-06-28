@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -25,7 +26,7 @@ public class MemberController {
 
 
     // Get: 클라이언트에서 서버로 어떠한 리소스로부터 정보를 요청하는 메서드
-    @GetMapping("/members/new") //@RequestMapping(value = "/members/new", method = "RequestMethod.GET)
+    @GetMapping("/members/new") //@RequestMapping(value = "/members/new", method = RequestMethod.GET)
     public String createForm(Model model) {
         // model 객체: Controller에서 생성한 데이터를 담아서 View로 전달할 때 사용하는 객체.
         model.addAttribute("memberForm", new MemberForm());
