@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 // @RestController = @Controller + @ResponseBody
 // @ResponseBody: 자바객체를 json, xml로 변환해서 보낼 때 사용
 @RequiredArgsConstructor
 public class MemberApiController {
+
 
     private final MemberService memberService;
     /**
@@ -41,6 +43,28 @@ public class MemberApiController {
         // 전달되지 못하게 강제하는 방법밖에 없다.
         // @JsonIgnore -> 모든 API에 영향을 주기 때문에 절대 사용해서는 안된다!!!
         return memberService.findMembers();
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result memberV2(){
+        List<Member> findMembers = memberService.findMembers();
+
+        List<MemberDTO> collect = findMembers.stream()
+                .map(m -> new MemberDTO(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result<>(collect);
+    }
+    @Data
+    @AllArgsConstructor
+    private class Result<T> {
+
+        private T data;
+    }
+    @Data
+    @AllArgsConstructor
+    static class MemberDTO{
+        private String name;
     }
 
     @PostMapping("/api/v1/members")
@@ -81,12 +105,11 @@ public class MemberApiController {
 
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
-
     @Data
     static class CreateMemberRequest {
         // 엔티티의 변화에도 대응할 수 있도록 값을 받는
-        // Request 파라미터를 별도로 생성
 
+        // Request 파라미터를 별도로 생성
         // 클라이언트 요청이 여기로 들어옴
         @NotEmpty(message = "이름은 필수 값 입니다")
         private String name;
@@ -98,8 +121,8 @@ public class MemberApiController {
         public CreateMemberResponse(Long id) {
             this.id = id;
         }
-    }
 
+    }
     @Data
     static class UpdateMemberRequest {
         // update 내용으로 id와 name을 받음
@@ -112,5 +135,6 @@ public class MemberApiController {
         // 클라이언트에게 반환
         private Long id;
         private String name;
+
     }
 }
