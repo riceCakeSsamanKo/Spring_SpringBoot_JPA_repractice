@@ -32,7 +32,7 @@ public class OrderSimpleApiController {
      * 안그러면 양쪽을 서로 호출하면서 무한 루프가 걸린다.
      */
     @GetMapping("api/v1/simple-orders")
-    public List<Order> ordersV1() {  // 엔티티를 직접 노
+    public List<Order> ordersV1() {  // 엔티티를 직접 노출
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
         for (Order order : all) {
             order.getMember().getName();  // Lazy 강제 초기화. Proxy 객체를 사용해서 정보 땡겨
