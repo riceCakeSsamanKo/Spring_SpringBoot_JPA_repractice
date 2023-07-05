@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,6 @@ public class OrderSimpleApiController {
         // 가져온 객체의 타입이 불분명해서 (프록시 객체) 또 에러가 발생한다.
         // (Type definition error: [simple type, class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor];)
     }
-
     @GetMapping("api/v2/simple-orders")
     public List<SimpleOrderDTO> ordersV2() {
         // N+1 문제
@@ -64,22 +62,30 @@ public class OrderSimpleApiController {
         return result;
     }
 
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDTO> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
 
+        return orders.stream()
+                .map(o -> new SimpleOrderDTO(o))
+                .collect(Collectors.toList());
+    }
 
     @Data
+    @AllArgsConstructor
     private class SimpleOrderDTO {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate;
-        private OrderStatus orderStatus;
+        private OrderStatus status;
         private Address address;
 
-        SimpleOrderDTO(Order order) {
-            this.orderId = order.getId();
-            this.name = order.getMember().getName(); // LAZY 초기화
-            this.orderDate = order.getOrderDate();
-            this.orderStatus = order.getStatus();
-            this.address = order.getDelivery().getAddress();  // LAZY 초기화
+        public SimpleOrderDTO(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName();
+            orderDate = order.getOrderDate();
+            status = order.getStatus();
+            address = order.getDelivery().getAddress();
         }
     }
 }

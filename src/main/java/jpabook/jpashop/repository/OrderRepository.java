@@ -93,5 +93,20 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
     }
+
+    public List<Order> findAllWithMemberDelivery() {
+        // join fetch: member, delivery가 Lazy로 fetchType이 설정되어 있는데,
+        // join fetch 하면 프록시 무시하고 실제 엔티티를 다 넣어서 가져온다.
+        // 즉, 지연로딩도 즉시로딩으로 가져온다.
+
+        // 여기서 주의해야 할 점은 fetch join으로 가져오는 경우 Order와 연관된 Member, Delivery가 모두
+        // join된 테이블을 가져오게 되는 것이다. 따라서 동일한 엔티티가 여러번 조회되는 중복 조회도 가능하다.
+        List<Order> result = em.createQuery("select o from Order o " +
+                "join fetch o.member m " +
+                "join fetch o.delivery d", Order.class)
+                .getResultList();
+
+        return result;
+    }
 }
 
