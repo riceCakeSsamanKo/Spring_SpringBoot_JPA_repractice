@@ -44,13 +44,16 @@ public class OrderSimpleApiController {
         // 이런식으로 무한 루프가 발생하게 된다.
 
         // Member.orders에 @JsonIgnore로 해서 가져온다고 해도, Order.member가 FetchType.LAZY이므로
-        // 가져온 객체의 타입이 불분명해서 또 에러가 발생한다.
+        // 가져온 객체의 타입이 불분명해서 (프록시 객체) 또 에러가 발생한다.
         // (Type definition error: [simple type, class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor];)
     }
 
     @GetMapping("api/v2/simple-orders")
     public List<SimpleOrderDTO> ordersV2() {
         // N+1 문제
+        // 하나의 order를 조회하는데 member와 delivery가 각각 n개씩 연관 되어있을때,
+        // 총 1(order조회) + N(member조회) + N(delivery조회) = 1 + 2N개의 쿼리가 나감
+        // 성능 최적화 필요!!
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
 
         List<SimpleOrderDTO> result
@@ -60,6 +63,8 @@ public class OrderSimpleApiController {
 
         return result;
     }
+
+
 
     @Data
     private class SimpleOrderDTO {

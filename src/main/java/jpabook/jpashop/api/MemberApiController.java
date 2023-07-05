@@ -71,7 +71,7 @@ public class MemberApiController {
     // @Valid: member를 검증할 때 사용, @RequestBody: json으로 온 내용을 member에 매핑
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
         // api 통신에 이런식으로 엔티티를 파라미터로 직접 받는 경우
-        // 엔티티의 필드가 바뀌는 경우 더이상 통신이 불가능한 문제등이 발생 가능.
+        // 엔티티의 필드가 바뀌는 경우 더 이상 통신이 불가능한 문제등이 발생 가능.
         // 엔티티의 변화가 api 스펙에 영향을 주는 식으로 설계하면 안된다.
         // 이는 잘못된 설계임.
         Long id = memberService.join(member);
@@ -115,13 +115,10 @@ public class MemberApiController {
         private String name;
     }
     @Data
+    @AllArgsConstructor
     static class CreateMemberResponse {
         // 클라이언트에게 반환 값. Json의 형태로 클라이언트에게 반환됨
         private Long id;
-        public CreateMemberResponse(Long id) {
-            this.id = id;
-        }
-
     }
     @Data
     static class UpdateMemberRequest {

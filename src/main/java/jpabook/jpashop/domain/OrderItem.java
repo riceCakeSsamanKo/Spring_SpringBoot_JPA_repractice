@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 @Table(name = "order_item")
 @Getter @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) //기본 생성자를 protectd로 선언해 생성
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //기본 생성자를 protected로 선언해 생성
 public class OrderItem {
     @Id
     @GeneratedValue
@@ -25,7 +25,7 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id")
     private Order order;

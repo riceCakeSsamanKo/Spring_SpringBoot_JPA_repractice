@@ -24,7 +24,7 @@ public class Member {
     @Embedded
     private Address address;
 
-    @JsonIgnore
+    //@JsonIgnore
     // 종속: member.orders
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
