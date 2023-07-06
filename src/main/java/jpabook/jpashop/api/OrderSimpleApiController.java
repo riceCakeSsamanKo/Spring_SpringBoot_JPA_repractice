@@ -3,6 +3,7 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.domain.*;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.SimpleOrderQueryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -47,40 +48,44 @@ public class OrderSimpleApiController {
         // (Type definition error: [simple type, class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor];)
     }
     @GetMapping("api/v2/simple-orders")
-    public List<SimpleOrderDTO> ordersV2() {
+    public List<SimpleOrderDto> ordersV2() {
         // N+1 문제
         // 하나의 order를 조회하는데 member와 delivery가 각각 n개씩 연관 되어있을때,
         // 총 1(order조회) + N(member조회) + N(delivery조회) = 1 + 2N개의 쿼리가 나감
         // 성능 최적화 필요!!
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
 
-        List<SimpleOrderDTO> result
+        List<SimpleOrderDto> result
                 = orders.stream()
-                .map(o -> new SimpleOrderDTO(o))
+                .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
 
         return result;
     }
 
     @GetMapping("/api/v3/simple-orders")
-    public List<SimpleOrderDTO> ordersV3() {
+    public List<SimpleOrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithMemberDelivery();
 
         return orders.stream()
-                .map(o -> new SimpleOrderDTO(o))
+                .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/api/v4/simple-orders")
+    public List<SimpleOrderQueryDto> orderV4() {
+        return orderRepository.findOrderDtos();
+    }
     @Data
     @AllArgsConstructor
-    private class SimpleOrderDTO {
+    private class SimpleOrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate;
         private OrderStatus status;
         private Address address;
 
-        public SimpleOrderDTO(Order order) {
+        public SimpleOrderDto(Order order) {
             orderId = order.getId();
             name = order.getMember().getName();
             orderDate = order.getOrderDate();
