@@ -2,6 +2,7 @@ package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -109,14 +110,6 @@ public class OrderRepository {
         return result;
     }
 
-    public List<OrderSimpleQueryDto> findOrderDtos() {
-        //jpa로 엔티티를 전달할 수는 없고, 식별자만 반환할 수 있기 때문에 Order 자체를 넘길 수는 없고 order의 필드값을 각각 따로 넘겨줘야한다.
-        return em.createQuery("select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, o.member.name,o.orderDate,o.status,o.delivery.address) " +
-                        "From Order o " +
-                        "join o.member " +
-                        "join o.delivery",
-                        OrderSimpleQueryDto.class)
-                .getResultList();
-    }
+
 }
 

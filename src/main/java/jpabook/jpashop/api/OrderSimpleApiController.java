@@ -3,7 +3,8 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.domain.*;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
-import jpabook.jpashop.repository.SimpleOrderQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     /**
      * 주의: 엔티티를 직접 노출할 때는 양방향 연관관계가 걸린 곳은 꼭!
@@ -73,9 +75,16 @@ public class OrderSimpleApiController {
     }
 
     @GetMapping("/api/v4/simple-orders")
-    public List<SimpleOrderQueryDto> orderV4() {
-        return orderRepository.findOrderDtos();
+    // orderV3는 연관된 모든 데이터를 가져오는 반면, orderV4는 내가 원하는 데이터만 선별적으로 가져온다.
+
+    // OrderSimpleQueryDto를 만들어서 DTO에 값을 집어넣는 과정을 보면, Member나 Delivery 엔티티를 가져온 뒤,
+    // 가져온 엔티티에서 정보를 꺼내어 DTO를 만드는 것이 아니라,
+    // 애초부터 member나 Delivery의 특정 필드값(엔티티가 아닌 멤버 변수 데이터들)만 따로 가져온 후,
+    // 이를 가지고 DTO를 만들기 때문에 ※join fetch가 없어도 Member, Delivery의 select 쿼리가 나가지 않는다※.
+    public List<OrderSimpleQueryDto> orderV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
+
     @Data
     @AllArgsConstructor
     private class SimpleOrderDto {

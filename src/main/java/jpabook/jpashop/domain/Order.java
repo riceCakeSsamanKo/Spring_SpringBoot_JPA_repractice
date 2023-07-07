@@ -23,7 +23,7 @@ public class Order {
     private Long id;
 
     // 주인: Order.member
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
 
