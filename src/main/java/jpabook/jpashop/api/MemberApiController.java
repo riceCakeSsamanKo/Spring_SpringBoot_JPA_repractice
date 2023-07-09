@@ -1,6 +1,8 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -90,6 +92,7 @@ public class MemberApiController {
         //@Valid 어노테이션 안 붙이면 에러메시지 안뜸
         Member member = new Member();
         member.setName(request.getName());
+        member.setAddress(request.getCity(),request.getStreet(),request.getZipcode());
         Long id = memberService.join(member);
 
         return new CreateMemberResponse(id);
@@ -105,6 +108,7 @@ public class MemberApiController {
 
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
+
     @Data
     static class CreateMemberRequest {
         // 엔티티의 변화에도 대응할 수 있도록 값을 받는
@@ -113,6 +117,13 @@ public class MemberApiController {
         // 클라이언트 요청이 여기로 들어옴
         @NotEmpty(message = "이름은 필수 값 입니다")
         private String name;
+
+        // Address
+        private String city;
+        private String street;
+        private String zipcode;
+
+        private Address address = new Address(city, street, zipcode);
     }
     @Data
     @AllArgsConstructor
