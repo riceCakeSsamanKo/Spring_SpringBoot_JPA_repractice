@@ -1,15 +1,19 @@
 package jpabook.jpashop.api;
 
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,14 +71,65 @@ public class OrderApiController {
         T Order;
     }
 
-    @GetMapping("/api/v1/orders")
+    @GetMapping("/api/v2/orders")
     public List<OrderDto> ordersV2(){
-        List<Order> all = orderRepository.findAllByString(new OrderSearch());
-
+        List<Order> all =
+                orderRepository.findAllByString(new OrderSearch());
+        List<OrderDto> collect =
+                all.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+        return collect;
     }
 
-    @Data
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3(){
+        List<Order> all = orderRepository.findAllWithItem();
+        for (Order order : all) {
+            System.out.println("order = " + order + "orderId = "+order.getId());
+        }
+        List<OrderDto> collect =
+                all.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+
+        return collect;
+    }
+    @Getter
     static class OrderDto {
-        
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;
+        private List<OrderItemDto> orderItems; // 엔티티를 Dto로 감쌈
+
+        /*
+        private List<OrderItem> orderItems; : Dto 내부에 엔티티가 존재한다.
+        => 엔티티에 의존하므로 orderItems도 별도의 Dto를 만들어서 반환해야 한다.
+        */
+
+        OrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName();
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress();
+
+            // OrderItem 엔티티를 그대로 반환하는 것이 아닌 별도의 Dto에 담아서 반환함으로써
+            // Dto가 내부적으로 엔티티에 의존하는 것을 방지할 수 있다.
+            orderItems = order.getOrderItems().stream()
+                    .map(o -> new OrderItemDto(o))
+                    .collect(Collectors.toList());
+        }
+
+        @Getter
+        static class OrderItemDto {
+            private String itemName;
+            private int orderPrice;
+            private int count;
+
+            OrderItemDto(OrderItem orderItem){
+                this.itemName = orderItem.getItem().getName();
+                this.orderPrice = orderItem.getOrderPrice();
+                this.count = orderItem.getCount();
+            }
+        }
     }
 }

@@ -111,5 +111,25 @@ public class OrderRepository {
     }
 
 
+    public List<Order> findAllWithItem() {
+        // orderItems의 item까지 join fetch로 한번의 쿼리만으로 다 끌고 옴.
+        // distinct를 통해 Order(one)가 OrderItems(many)에 의해 데이터 뻥튀기 되는 것을 방지
+        // distinct: 동일한 엔티티가 조회시 중복 엔티티를 버림.
+        // 이 경우 동일한 Order가 두 개씩 총 4개가 조회되는데
+        // distinct에 의해서 중복 조회된 엔티티들이 제거되어 두 개만 조회됨.
+
+        // distinct 없을 시: order(id=4), order(id=4), order(id=11), order(id=11)
+        // distinct 있을 시: order(id=4), order(id=11) 중복 제거
+
+        List<Order> result = em.createQuery(
+                "select distinct o from Order o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d " +
+                        "join fetch o.orderItems oi " +
+                        "join fetch oi.item i", Order.class)
+                .getResultList();
+
+        return result;
+    }
 }
 

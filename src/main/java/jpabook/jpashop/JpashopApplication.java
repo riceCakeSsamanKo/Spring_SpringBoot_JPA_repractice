@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import jpabook.jpashop.domain.Delivery;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

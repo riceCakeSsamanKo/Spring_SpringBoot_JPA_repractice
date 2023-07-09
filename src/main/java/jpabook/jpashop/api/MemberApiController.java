@@ -109,7 +109,7 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
 
-    @Data
+    @Data //@Getter, @Setter, @RequiredArgsConstructor, @ToString, @EqualsAndHashCode, @Value
     static class CreateMemberRequest {
         // 엔티티의 변화에도 대응할 수 있도록 값을 받는
 
