@@ -50,20 +50,31 @@ public class OrderApiController {
 
         // LAZY 로딩 강제 초기화
         for (Order order : all) {
-            order.getMember().getName();  // Member 초기화
-            order.getDelivery().getAddress();  // Delivery 초기화
+            order.getMember().getName();  // Member LAZY 초기화
+            order.getDelivery().getAddress();  // Delivery LAZY 초기화
 
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.stream().forEach(o -> o.getItem().getName());  // OrderItem, Item 초기화
         }
-        List<Result<Order>> results = all.stream().map(order -> new Result<Order>(order)).collect(Collectors.toList());
+        List<Result<Order>> results =
+                all.stream().map(o -> new Result<Order>(o)).collect(Collectors.toList());
 
         return results;
     }
-
     @Data
     @AllArgsConstructor
     private static class Result<T>{
         T Order;
+    }
+
+    @GetMapping("/api/v1/orders")
+    public List<OrderDto> ordersV2(){
+        List<Order> all = orderRepository.findAllByString(new OrderSearch());
+
+    }
+
+    @Data
+    static class OrderDto {
+        
     }
 }
