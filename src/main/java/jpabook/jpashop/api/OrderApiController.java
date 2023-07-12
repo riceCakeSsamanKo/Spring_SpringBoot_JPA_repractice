@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -91,6 +92,25 @@ public class OrderApiController {
 
         return collect;
     }
+ 
+    @GetMapping("/api/v3.1/orders")
+    /** @RequestParnam
+     *
+     * @RequestParam(value = "offset", defaultValue = "0") int offset 설명
+     * : "localhost:8080/api/v3.1/orders?offset=value" 도메인의 offset 값을 가져와서 int offset에 넘김.
+     * 이때 offset의 값이 없는 경우 에러가 발생하므로 defaultValue를 지정한다.
+     * 이 경우는 offset값이 넘어오지 않는 경우 0 int offset에 대입.
+     */
+    public List<OrderDto> orderV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                       @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        // 컬렉션이 아닌 엔티티만 페치 조인으로 가져오고, 컬렉션은 페치조인으로 가져오지 않고, 대신 지연로딩으로 가져와 페이징이 가능
+        List<Order> orders =
+                orderRepository.findAllWithMemberDelivery(offset,limit);// 컬렉션이 아닌 엔티티(member, delivery)만 페치 조인으로 조회 해오는 메서드
+        List<OrderDto> result =
+                orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+
+        return result;
+    }
     @Getter
     static class OrderDto {
         private Long orderId;
@@ -116,7 +136,7 @@ public class OrderApiController {
             // Dto가 내부적으로 엔티티에 의존하는 것을 방지할 수 있다.
             orderItems = order.getOrderItems().stream()
                     .map(o -> new OrderItemDto(o))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());  // 루프 돌면서 지연 로딩
         }
 
         @Getter
@@ -125,7 +145,7 @@ public class OrderApiController {
             private int orderPrice;
             private int count;
 
-            OrderItemDto(OrderItem orderItem){
+            private OrderItemDto(OrderItem orderItem) {
                 this.itemName = orderItem.getItem().getName();
                 this.orderPrice = orderItem.getOrderPrice();
                 this.count = orderItem.getCount();

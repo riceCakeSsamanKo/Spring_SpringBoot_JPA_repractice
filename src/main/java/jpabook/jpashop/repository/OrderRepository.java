@@ -95,7 +95,7 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    public List<Order> findAllWithMemberDelivery() {
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
         // join fetch: member, delivery가 Lazy로 fetchType이 설정되어 있는데,
         // join fetch 하면 프록시 무시하고 실제 엔티티를 다 넣어서 가져온다.
         // 즉, 지연로딩도 즉시로딩으로 가져온다.
@@ -105,6 +105,8 @@ public class OrderRepository {
         List<Order> result = em.createQuery("select o from Order o " +
                 "join fetch o.member m " +
                 "join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
 
         return result;
@@ -114,7 +116,7 @@ public class OrderRepository {
     public List<Order> findAllWithItem() {
         // orderItems의 item까지 join fetch로 한번의 쿼리만으로 다 끌고 옴.
         // distinct를 통해 Order(one)가 OrderItems(many)에 의해 데이터 뻥튀기 되는 것을 방지
-        // distinct: 동일한 엔티티가 조회시 중복 엔티티를 버림.
+        // distinct: 동일한 엔티티가 조회시 중복 엔티티를 버림. (== id 값이 동일한 엔티티가 존재시 중복 제거)
         // 이 경우 동일한 Order가 두 개씩 총 4개가 조회되는데
         // distinct에 의해서 중복 조회된 엔티티들이 제거되어 두 개만 조회됨.
 
@@ -133,3 +135,11 @@ public class OrderRepository {
     }
 }
 
+
+// --컬렉션 페치 조인의 문제점, 페이징과 한계 돌파-- //
+// 문제점:
+// 특정 엔티티에 컬렉션 엔티티를 조인하여 조회하게 되면 해당 엔티티의 row 수가 컬렉션에 의해서 뻥튀기 되는 문제 발생 -> row수가 복사되어 페이징이 불가능.
+
+// 문제 해결:
+// xxxToOne 관계인 엔티티는 페치 조인으로 가져오고, 컬렉션은 지연로딩으로 가져온다
+// 지연 로딩 성능 최적화를 위해 hibernate.default_batch_fetch_size , @BatchSize 를 적용
