@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * V1. 엔티티 직접 노출
@@ -66,7 +70,7 @@ public class OrderApiController {
             orderItems.stream().forEach(o -> o.getItem().getName());  // OrderItem, Item 초기화
         }
         List<Result<Order>> results =
-                all.stream().map(o -> new Result<Order>(o)).collect(Collectors.toList());
+                all.stream().map(o -> new Result<Order>(o)).collect(toList());
 
         return results;
     }
@@ -81,7 +85,7 @@ public class OrderApiController {
         List<Order> all =
                 orderRepository.findAllByString(new OrderSearch());
         List<OrderDto> collect =
-                all.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+                all.stream().map(o -> new OrderDto(o)).collect(toList());
         return collect;
     }
 
@@ -92,7 +96,7 @@ public class OrderApiController {
             System.out.println("order = " + order + "orderId = "+order.getId());
         }
         List<OrderDto> collect =
-                all.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+                all.stream().map(o -> new OrderDto(o)).collect(toList());
 
         return collect;
     }
@@ -111,7 +115,7 @@ public class OrderApiController {
         List<Order> orders =
                 orderRepository.findAllWithMemberDelivery(offset,limit);// 컬렉션이 아닌 엔티티(member, delivery)만 페치 조인으로 조회 해오는 메서드
         List<OrderDto> result =
-                orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+                orders.stream().map(o -> new OrderDto(o)).collect(toList());
 
         return result;
     }
@@ -126,6 +130,29 @@ public class OrderApiController {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
+    @GetMapping("/api/v6/orders")
+    /**
+     * 장점: Query: 1번
+     * 단점: 쿼리는 한번이지만 조인으로 인해 DB에서 애플리케이션에 전달하는 데이터에 중복 데이터가 추가되므로
+     * 상황에 따라 V5 보다 더 느릴 수 도 있다.
+     * 애플리케이션에서 추가 작업이 크다.
+     * 페이징 불가능
+     */
+    public List<OrderQueryDto> orderV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+        return flats.stream() // OrderFlatDto -> OrderQueryDto
+                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+                )).entrySet().stream()
+                .map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+                        e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+                        e.getKey().getAddress(), e.getValue()))
+                .collect(toList());
+
+    }
     @Getter
     static class OrderDto {
         private Long orderId;
@@ -151,7 +178,7 @@ public class OrderApiController {
             // Dto가 내부적으로 엔티티에 의존하는 것을 방지할 수 있다.
             orderItems = order.getOrderItems().stream()
                     .map(o -> new OrderItemDto(o))
-                    .collect(Collectors.toList());  // 루프 돌면서 지연 로딩
+                    .collect(toList());  // 루프 돌면서 지연 로딩
         }
 
         @Getter
