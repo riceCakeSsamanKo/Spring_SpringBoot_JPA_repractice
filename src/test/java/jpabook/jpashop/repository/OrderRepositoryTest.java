@@ -62,7 +62,7 @@ public class OrderRepositoryTest {
         orderRepository.save(order2);
 
         //when
-        List<Order> joinFetchOrders = orderRepository.findAllWithMemberDelivery();
+        List<Order> joinFetchOrders = orderRepository.findAllWithMemberDelivery(0,0);
 
         //then
         for (Order order : joinFetchOrders) {
