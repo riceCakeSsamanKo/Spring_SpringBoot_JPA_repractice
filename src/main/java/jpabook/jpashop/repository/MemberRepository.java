@@ -13,7 +13,7 @@ import java.util.List;
 
 // JpaRepository: findById, findAll, save, saveAll... 등등 Repository 기능이 이미 어느정도 구현되어 있다
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    // JpaRepository<엔티티,Id의 자료형(= Long)>
+    // ... extends JpaRepository<엔티티,Id의 자료형(= Long)>
 
     // findByName과 같이 JpaRepository에는 없는 기능들은 따로 선언을 해야함.
     // 근데 findByxxx 라고 메서드를 선언만 하면 자동으로 "select m from Member m where m.xxx = :xxx"
