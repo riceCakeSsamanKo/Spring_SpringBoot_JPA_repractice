@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,7 +68,7 @@ public class OrderApiController {
             order.getDelivery().getAddress();  // Delivery LAZY 초기화
 
             List<OrderItem> orderItems = order.getOrderItems();
-            orderItems.stream().forEach(o -> o.getItem().getName());  // OrderItem, Item 초기화
+            orderItems.stream().forEach(o -> o.getItem().getName());  // OrderItem, Item 초기화(1+N 문제 발생)
         }
         List<Result<Order>> results =
                 all.stream().map(o -> new Result<Order>(o)).collect(toList());
@@ -113,10 +114,10 @@ public class OrderApiController {
                                        @RequestParam(value = "limit", defaultValue = "100") int limit) {
         // 컬렉션이 아닌 엔티티만 페치 조인으로 가져오고, 컬렉션은 페치조인으로 가져오지 않고, 대신 지연로딩으로 가져와 페이징이 가능
         List<Order> orders =
-                orderRepository.findAllWithMemberDelivery(offset,limit);// 컬렉션이 아닌 엔티티(member, delivery)만 페치 조인으로 조회 해오는 메서드
+                orderRepository.findAllWithMemberDelivery(offset,limit);// ToOne 관계인 엔티티(member, delivery)만 페치 조인으로 조회 해오는 메서드
+        // 지연로딩 시 1(Order) + N(OrderItem) + N(Item) 문제 발생.
         List<OrderDto> result =
                 orders.stream().map(o -> new OrderDto(o)).collect(toList());
-
         return result;
     }
 

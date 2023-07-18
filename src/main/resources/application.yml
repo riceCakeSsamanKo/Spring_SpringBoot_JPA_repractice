@@ -14,6 +14,7 @@ spring:
 #        show_sql: true  log가 system.out으로 출려됨
         format_sql: true
         default_batch_fetch_size: 100 # 컬렉션을 조회해올 때 설정한 크기만큼 in 쿼리로 컬렉션을 한방에 조회.
+    open-in-view: false
 logging:
   level:
     org.hibernate.SQL: debug  # sql이 logger로 모두 나타남
