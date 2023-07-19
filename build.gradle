@@ -1,27 +1,20 @@
-/* 10-1. querydsl version 정보 추가 */
-
 buildscript {
     ext {
-        queryDslVersion = "5.0.0";
+        queryDslVersion = "5.0.0"
     }
 }
 
-
 plugins {
-    id 'org.springframework.boot' version '2.7.8'
+    id 'org.springframework.boot' version '2.6.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
-    id 'war'
-
-/* 10-2. querydsl plugin 추가 */
+    //querydsl 추가
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id 'java'
 }
 
-group = 'jpashop'
+group = 'jpabook'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
-
-/* 10-3. querydsl */
+sourceCompatibility = '11'
 
 configurations {
     compileOnly {
@@ -33,7 +26,6 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     //H2 데이터베이스 추가
     runtimeOnly 'com.h2database:h2'
@@ -42,8 +34,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-/* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+///* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
+//    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
 /* 3. lombok */
     compileOnly 'org.projectlombok:lombok'
@@ -70,6 +62,9 @@ dependencies {
 /* 10-4. querydsl dependencies 추가 */
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+    //querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
 /* 11. thymeleaf-layout-dialect */
     implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
@@ -99,34 +94,27 @@ dependencies {
     implementation 'junit:junit:4.13.1'
 }
 
-
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
 
-/* 10-5. querydsl에서 사용할 경로 지정*/
-def querydslDir = "src/main/generated"
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
 
-/* 10-6. JPA사용 여부와 사용할 경로를 지정*/
 querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
 }
-
-
-/* 10-7. build시 사용할 SourceSet 추가 */
-
 sourceSets {
     main.java.srcDir querydslDir
 }
-
-
-/* 10-8. querydsl이 complieClasspath를 상속하도록 설정 */
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
-/* 10-9. querydsl 컴파일시 사용할 옵션 설정 */
-compileQuerydsl {
+compileQuerydsl{
     options.annotationProcessorPath = configurations.querydsl
 }
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+//querydsl 추가 끝
