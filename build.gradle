@@ -1,86 +1,137 @@
-plugins {
-	id 'org.springframework.boot' version '2.6.5'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+/* 10-1. querydsl version 정보 추가 */
+
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0";
+    }
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
 
-ext["hibernate.version"] = "5.6.5.Final"
+
+plugins {
+    id 'org.springframework.boot' version '2.6.7'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'war'
+
+/* 10-2. querydsl plugin 추가 */
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+
+
+group = 'com.shop'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+/* 10-3. querydsl */
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
+
+
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
+
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+    //H2 데이터베이스 추가
+    runtimeOnly 'com.h2database:h2'
 
-	//JdbcTemplate 추가
-	//implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	//MyBatis 추가
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
-	//JPA, 스프링 데이터 JPA 추가
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+/* 1. web */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	//Querydsl 추가
-	implementation 'com.querydsl:querydsl-jpa'
-	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+/* 2. 배포시 내장톰캣을 사용하지 않을거라는 dependency */
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
-	//H2 데이터베이스 추가
-	runtimeOnly 'com.h2database:h2'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+/* 3. lombok */
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	//테스트에서 lombok 사용
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+/* 4. devtools */
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 
+/* 5. thymeleaf */
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	// devtools 라이브러리 추가 시 html 파일을 수정시 스프링을 재실행 할 필요 없이
-	// 해당 파일만 shift+command+F9으로 재컴파일 시 페이지가 해당 내용에 맞게 수정됨
-	implementation 'org.springframework.boot:spring-boot-devtools'
-	implementation 'junit:junit:4.13.1'
-	//Hibernate5module
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
-	//쿼리 파라미터를 로그로 남기는 외부 라이브러리
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+/* 6. mybatis */
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
 
-	//Querydsl 추가
-	implementation 'com.querydsl:querydsl-jpa'
-	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+/* 7. MariaDB */
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-	runtimeOnly 'com.h2database:h2'
+/* 8. JDBC */
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
-	// 롬복 설정
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	// JUnit4 추가
-	testImplementation("org.junit.vintage:junit-vintage-engine") {
-		exclude group: "org.hamcrest", module: "hamcrest-core"
-	}
+/* 9. JPA */
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+/* 10-4. querydsl dependencies 추가 */
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+/* 11. thymeleaf-layout-dialect */
+    implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
+
+/* 12. spring-boot-starter-security
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'*/
+
+/* 13. validation(Bean Validation) */
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+/* 14. modelmapper */
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
+
+/* 15. thymeleaf-extras-springsecurity5 */
+    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5'
+
+/* 16. spring-security-test */
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
+
+/* 17. hibernate5module*/
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
+
+/* 18. p6spy */
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+
+/* 19.junit */
+    implementation 'junit:junit:4.13.1'
 }
+
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
-//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
-clean {
-	delete file('src/main/generated')
+/* 10-5. querydsl에서 사용할 경로 지정*/
+def querydslDir = "src/main/generated"
+
+/* 10-6. JPA사용 여부와 사용할 경로를 지정*/
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+
+/* 10-7. build시 사용할 SourceSet 추가 */
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+
+/* 10-8. querydsl이 complieClasspath를 상속하도록 설정 */
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+/* 10-9. querydsl 컴파일시 사용할 옵션 설정 */
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
