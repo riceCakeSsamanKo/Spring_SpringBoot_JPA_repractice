@@ -69,8 +69,8 @@ dependencies {
 /* 11. thymeleaf-layout-dialect */
     implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
 
-/* 12. spring-boot-starter-security */
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+///* 12. spring-boot-starter-security */
+//    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
 
 /* 13. validation(Bean Validation) */
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -78,11 +78,11 @@ dependencies {
 /* 14. modelmapper */
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
 
-/* 15. thymeleaf-extras-springsecurity5 */
-    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5'
+///* 15. thymeleaf-extras-springsecurity5 */
+//    implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5'
 
-/* 16. spring-security-test */
-    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
+///* 16. spring-security-test */
+//    testImplementation group: 'org.springframework.security', name: 'spring-security-test'
 
 /* 17. hibernate5module*/
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
